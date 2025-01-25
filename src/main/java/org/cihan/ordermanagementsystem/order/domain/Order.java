@@ -22,7 +22,7 @@ public class Order extends AbstractEntity {
 
     private UUID customerId;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order" , cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
     private BigDecimal totalAmount;
