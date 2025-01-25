@@ -1,19 +1,19 @@
 # Project Name: Order Management System
 
-### Projenin Amacı
-Bu proje, bir sipariş yönetim sistemi olarak tasarlanmıştır. Kullanıcılar, müşteri, ürün, sipariş ve sipariş öğeleri gibi temel varlıklarla işlem yapabilmektedir. Sistem, aşağıdaki işlevleri sunmaktadır:
+### Project Purpose
+This project is designed as an order management system. Users can interact with basic entities such as customer, product, order, and order items. The system provides the following functionalities:
 
-* Müşteri Yönetimi: Müşterilerle ilgili işlemler (CRUD).
-* Ürün Yönetimi: Ürünlerle ilgili işlemler (CRUD).
-* Sipariş Yönetimi: Siparişlerle ilgili işlemler (CRUD).
-* Sipariş Öğeleri Yönetimi: Siparişlerdeki ürünlerin yönetimi (CRUD).
-* Bu proje, DDD(Domain Driven Design) temel alarak tasarlanmıştır. Proje, Java ve Spring Boot kullanılarak yapılmıştır. Veritabanı olarak PostgreSQL kullanılmıştır.
+* Customer Management: Operations related to customers (CRUD).
+* Product Management: Operations related to products (CRUD).
+* Order Management: Operations related to orders (CRUD).
+* Order Items Management: Management of products within orders (CRUD)
 
+## This project is designed based on Domain-Driven Design (DDD) principles. It is developed using Java and Spring Boot, and PostgreSQL is used as the database.
 
 ### Guides
 
-### Gereksinimler
-* JDK 11 veya daha yüksek bir sürüm
+### Requirements
+* JDK 11 or higher
 * PostgreSQL
 * Maven 
 * Docker
@@ -29,13 +29,14 @@ To run the Flight Service API locally, follow these steps:
     ```
 2. **Build and Run the Project:**
 
-   Proje ilk kez yüklenmişse aşagıdaki docker komutu kullanılmalıdır:
+   If this is the first time the project is being loaded, use the following Docker command:
      ```bash
     docker compose -f docker-compose.yml up --build -d 
      ```
    bu komut API build edip docker container'ı oluşturur ve SWAGGER: http://localhost:8080/swagger-ui/index.html adresinden ulaşılabilir hale getirir.
    
-   Docker image oluşmuş ve API tekrar çalıştırılmak isteniyorsa aşagıdaki docker komutu kullanılmalıdır:
+   This command builds the API and creates the Docker container. The API will be accessible at the SWAGGER URL: http://localhost:8080/swagger-ui/index.html.
+   If the Docker image has been created and the API needs to be restarted, use the following Docker command:
     ```bash
     docker compose -f docker-compose.yml up -d 
     ```
@@ -44,6 +45,7 @@ To run the Flight Service API locally, follow these steps:
    Open your web browser and go to [SWAGGER URL](http://localhost:8080/swagger-ui/index.html) to explore the API documentation using Swagger.
 
    To open the Test Report URL, go to the test report url located in the swagger documentation: [TEST REPORT URL](http://localhost:63342/order-management-system/target/reports/surefire.html?_ijt=thlaaghe14283nl8v2h5ffu27h&_ij_reload=RELOAD_ON_SAVE)
+
 4. **Development Environment:**
 
-If you want to work on the project, you can use an integrated development environment (IDE) like Spring Tool Suite or IntelliJ IDEA.
+    If you want to work on the project, you can use an integrated development environment (IDE) like Spring Tool Suite or IntelliJ IDEA.
