@@ -53,3 +53,7 @@ To run the Flight Service API locally, follow these steps:
 5. **Test Report Screenshot:**
 
     ![](https://github.com/oguzcihan/order-management-system/blob/master/surefire_test_report.png)
+
+6. **Postman Collection:**
+
+    [DOWNLOAD POSTMAN COLLECTION](https://github.com/oguzcihan/order-management-system/blob/master/Order%20Management%20System.postman_collection.json)
