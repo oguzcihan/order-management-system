@@ -1,0 +1,39 @@
+package org.cihan.ordermanagementsystem.product;
+
+import org.cihan.ordermanagementsystem.product.domain.Product;
+import org.cihan.ordermanagementsystem.product.domain.ProductPurchaseResponse;
+import org.cihan.ordermanagementsystem.product.domain.ProductRequest;
+import org.cihan.ordermanagementsystem.product.domain.ProductResponse;
+
+public class ProductMapper {
+    public Product toProduct(ProductRequest productRequest) {
+        return Product.builder()
+                .name(productRequest.name())
+                .description(productRequest.description())
+                .stockQuantity(productRequest.stockQuantity())
+                .price(productRequest.price())
+                .build();
+    }
+
+    public ProductResponse toProductResponse(Product product) {
+        return new ProductResponse(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getStockQuantity(),
+                product.getPrice(),
+                product.getCreatedDate()
+        );
+    }
+
+    public ProductPurchaseResponse toProductPurchaseResponse(Product product, double quantity) {
+        return new ProductPurchaseResponse(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                quantity
+        );
+
+    }
+}

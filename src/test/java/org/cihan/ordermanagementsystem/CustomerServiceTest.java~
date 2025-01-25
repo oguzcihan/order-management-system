@@ -1,0 +1,46 @@
+package org.cihan.ordermanagementsystem;
+
+import org.aspectj.lang.annotation.Before;
+import org.cihan.ordermanagementsystem.customer.domain.CustomerRequest;
+import org.cihan.ordermanagementsystem.customer.domain.CustomerResponse;
+import org.cihan.ordermanagementsystem.customer.mapper.CustomerMapper;
+import org.cihan.ordermanagementsystem.customer.repository.CustomerRepository;
+import org.cihan.ordermanagementsystem.customer.service.CustomerService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@SpringBootTest
+@ExtendWith(MockitoExtension.class)
+public class CustomerServiceTest {
+
+    private CustomerService customerService;
+
+    @BeforeEach
+    public void setUp() {
+
+        CustomerRepository customerRepository = Mockito.mock(CustomerRepository.class);
+        CustomerMapper customerMapper = Mockito.mock(CustomerMapper.class);
+        customerService = Mockito.mock(CustomerService.class);
+
+        customerService = new CustomerService(customerRepository, customerMapper);
+
+    }
+
+    @Test
+    public void testGetCustomerById() {
+        // Arrange
+        CustomerRequest customerRequest = new CustomerRequest("John", "Doe", "john.doe@example.com", "123456789");
+        CustomerResponse customerResponse = new CustomerResponse(UUID.fromString("442f3ec5-4e92-4b2e-8df5-de1b12812246"), "John", "Doe", "john.doe@example.com", "123456789");
+        Mockito.when(customerService.getCustomerById(UUID.fromString("442f3ec5-4e92-4b2e-8df5-de1b12812246")))
+                .thenReturn(Optional.of(customerResponse));
+
+    }
+
+}

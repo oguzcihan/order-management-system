@@ -1,0 +1,18 @@
+package org.cihan.ordermanagementsystem.product.domain;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+import java.math.BigDecimal;
+
+public record ProductRequest(
+        @NotNull(message = "Product name is required")
+        String name,
+        @NotNull(message = "Product description is required")
+        String description,
+        @Positive(message = "Product quantity must be greater than zero")
+        int stockQuantity,
+        @Positive(message = "Product price must be greater than zero")
+        BigDecimal price
+) {
+}

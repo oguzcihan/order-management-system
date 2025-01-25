@@ -1,0 +1,2 @@
+${AnsiColor.RED}::Oğuzhan Cihan :: Running Spring Boot ${spring-boot.version}
+${application.title}::SWAGGER:: http://localhost:8080/swagger-ui/index.html

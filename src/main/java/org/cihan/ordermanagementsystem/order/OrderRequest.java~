@@ -1,0 +1,22 @@
+package org.cihan.ordermanagementsystem.order;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+public record OrderRequest(
+
+        @Positive(message = "Amount must be positive")
+        BigDecimal totalAmount,
+
+        @NotEmpty(message = "Customer ID cannot be null")
+        @NotBlank(message = "Customer ID cannot be null")
+        @NotNull(message = "Customer ID cannot be null")
+        String customerId
+
+) {
+}

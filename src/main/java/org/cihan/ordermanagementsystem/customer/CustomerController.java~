@@ -1,0 +1,59 @@
+package org.cihan.ordermanagementsystem.customer;
+
+import jakarta.validation.Valid;
+import org.cihan.ordermanagementsystem.common.utils.PaginationUtil;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/v1/customers")
+public class CustomerController {
+
+    private final CustomerService customerService;
+
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
+
+    @PostMapping
+    public ResponseEntity<CustomerResponse> createCustomer(@RequestBody @Valid CustomerRequest customerRequest) throws URISyntaxException {
+        CustomerResponse result = customerService.createCustomer(customerRequest);
+        return ResponseEntity.created(new URI("/api/v1/customers/" + result.id())).body(result);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CustomerResponse>> getAllCustomers(@ParameterObject Pageable pageable) {
+
+        Page<CustomerResponse> customerPage = customerService.getAllCustomers(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), customerPage);
+
+        return ResponseEntity.ok()
+                .headers(headers).body(customerPage.getContent());
+    }
+
+    @GetMapping("/{id}")
+    public CustomerResponse getCustomerById(@PathVariable UUID id) {
+        return customerService.getCustomerById(id);
+    }
+
+    @PutMapping
+    public CustomerResponse updateCustomer(@RequestBody @Valid CustomerRequest customerRequest) {
+        return customerService.updateCustomer(customerRequest);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable UUID id) {
+        customerService.deleteCustomer(id);
+        return ResponseEntity.accepted().build();
+    }
+}

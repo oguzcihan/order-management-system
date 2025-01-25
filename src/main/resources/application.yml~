@@ -1,0 +1,35 @@
+server:
+  port: ${SERVER_PORT:8090}
+spring:
+  application:
+    name: order-management-system
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${SPRING_DATASOURCE_USERNAME}
+    url: ${SPRING_DATASOURCE_URL}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      pool-name: order-management-system
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: 'false'
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+ocihan:
+  openapi:
+    dev-url: ${SPRING_DATASOURCE_URL}
+
+
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+      hibernate: ERROR
+    root: info

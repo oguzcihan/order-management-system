@@ -1,0 +1,143 @@
+package org.cihan.ordermanagementsystem.order;
+
+import lombok.RequiredArgsConstructor;
+import org.cihan.ordermanagementsystem.common.exception.BusinessException;
+import org.cihan.ordermanagementsystem.common.exception.NotFoundException;
+import org.cihan.ordermanagementsystem.customer.service.CustomerService;
+import org.cihan.ordermanagementsystem.product.domain.Product;
+import org.cihan.ordermanagementsystem.product.service.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class OrderService {
+    private final Logger log = LoggerFactory.getLogger(OrderService.class);
+
+    private final OrderRepository orderRepository;
+    private final OrderItemService orderItemService;
+    private final CustomerService customerService;
+    private final ProductService productService;
+    private final OrderMapper orderMapper;
+
+    @Transactional
+    public OrderResponse createOrder(OrderRequest orderRequest) {
+        //check the customer
+        customerService.getCustomerById(orderRequest.customerId())
+                .orElseThrow(() -> new BusinessException("Customer not found with ID: " + orderRequest.customerId()));
+
+        //check the product
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        List<OrderItem> orderItems = orderRequest.orderItems().stream().map(orderItem -> {
+            Product product = productService.findById(orderItem.productId())
+                    .orElseThrow(() -> new NotFoundException("Product not found with ID: " + orderItem.productId()));
+
+            if (product.getStockQuantity()< orderItem.quantity()) {
+                throw new IllegalArgumentException("Insufficient stock for product ID: " + orderItem.productId());
+            }
+
+            product.setStockQuantity(product.getStockQuantity() - orderItem.quantity());
+            productService.updateQuantity(product);
+
+            return OrderItem.builder()
+                    .productId(orderItem.productId())
+                    .quantity(orderItem.quantity())
+                    .price(product.getPrice())
+                    .build();
+        }).collect(Collectors.toList());
+
+        for (OrderItem item : orderItems) {
+            totalAmount = totalAmount.add(item.getTotalPrice());
+        }
+
+        Order order = Order.builder()
+                .customerId(orderRequest.customerId())
+                .orderItems(orderItems)
+                .totalAmount(totalAmount)
+                .build();
+        Order savedOrder = orderRepository.save(order);
+
+        return orderMapper.toOrderResponse(savedOrder);
+    }
+
+    public List<OrderResponse> getOrdersByCustomerId(UUID customerId) {
+        return orderRepository.findByCustomerId(customerId).stream().map(orderMapper::toOrderResponse
+        ).collect(Collectors.toList());
+    }
+
+    public Page<OrderResponse> getAllOrders(Pageable pageable) {
+        Page<Order> orderPage = orderRepository.findAll(pageable);
+        return orderPage.map(orderMapper::toOrderResponse);
+    }
+
+    @Transactional
+    public OrderResponse updateOrder(UUID orderId, OrderRequest orderRequest) {
+        Order existingOrder = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order not found with ID: " + orderId));
+
+        // Eski stokları geri yükleme
+        existingOrder.getOrderItems().forEach(item -> {
+            Product product = productRepository.findById(item.getProductId())
+                    .orElseThrow(() -> new NotFoundException("Product not found with ID: " + item.getProductId()));
+            product.setStockQuantity(product.getStockQuantity() + item.getQuantity());
+            productRepository.save(product);
+        });
+
+        // Yeni sipariş detaylarını işleme
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        List<OrderItem> updatedItems = orderRequest.orderItems().stream().map(orderItem -> {
+            Product product = productRepository.findById(orderItem.productId())
+                    .orElseThrow(() -> new NotFoundException("Product not found with ID: " + orderItem.productId()));
+
+            if (product.getStockQuantity() < orderItem.quantity()) {
+                throw new IllegalArgumentException("Insufficient stock for product ID: " + orderItem.productId());
+            }
+
+            product.setStockQuantity(product.getStockQuantity() - orderItem.quantity());
+            productRepository.save(product);
+
+            return OrderItem.builder()
+                    .productId(orderItem.productId())
+                    .quantity(orderItem.quantity())
+                    .price(product.getPrice())
+                    .build();
+        }).collect(Collectors.toList());
+
+        for (OrderItem item : updatedItems) {
+            totalAmount = totalAmount.add(item.getTotalPrice());
+        }
+
+        existingOrder.setOrderItems(updatedItems);
+        existingOrder.setTotalAmount(totalAmount);
+
+        Order updatedOrder = orderRepository.save(existingOrder);
+
+        return orderMapper.toOrderResponse(updatedOrder);
+    }
+
+    @Transactional
+    public void deleteOrder(UUID orderId) {
+        Order existingOrder = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order not found with ID: " + orderId));
+
+        // Stokları geri yükle
+        existingOrder.getOrderItems().forEach(item -> {
+            Product product = productRepository.findById(item.getProductId())
+                    .orElseThrow(() -> new NotFoundException("Product not found with ID: " + item.getProductId()));
+            product.setStockQuantity(product.getStockQuantity() + item.getQuantity());
+            productRepository.save(product);
+        });
+
+        orderRepository.delete(existingOrder);
+    }
+}

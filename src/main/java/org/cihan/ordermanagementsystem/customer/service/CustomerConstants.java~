@@ -1,0 +1,10 @@
+package org.cihan.ordermanagementsystem.customer.service;
+
+public class CustomerConstants {
+    public static final String CUSTOMER_EMAIL_REQUIRED = "Customer email is required";
+    public static final String CUSTOMER_EMAIL_INVALID = "Customer email is not valid";
+    public static final String CUSTOMER_FIRSTNAME_REQUIRED = "Customer firstname is required";
+    public static final String CUSTOMER_LASTNAME_REQUIRED = "Customer lastname is required";
+    public static final String CUSTOMER_NOT_FOUND = "Customer with ID %s not found.";
+
+}

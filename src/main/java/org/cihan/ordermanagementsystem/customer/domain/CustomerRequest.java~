@@ -1,0 +1,18 @@
+package org.cihan.ordermanagementsystem.customer.domain;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import org.cihan.ordermanagementsystem.customer.service.CustomerConstants;
+
+public record CustomerRequest(
+        @NotNull(message = CustomerConstants.CUSTOMER_FIRSTNAME_REQUIRED)
+        String firstName,
+        @NotNull(message = CustomerConstants.CUSTOMER_LASTNAME_REQUIRED)
+        String lastName,
+        @NotNull(message = CustomerConstants.CUSTOMER_EMAIL_REQUIRED)
+        @Email(message = CustomerConstants.CUSTOMER_EMAIL_INVALID)
+        String email,
+
+        String phone
+) {
+}

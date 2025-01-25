@@ -1,0 +1,39 @@
+package org.cihan.ordermanagementsystem.common.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class DataSourceConfig {
+    @Value("${SPRING_DATASOURCE_USERNAME:defaultUsername}")
+    private String datasourceUsername;
+
+    @Value("${SPRING_DATASOURCE_PASSWORD:defaultPassword}")
+    private String datasourcePassword;
+
+    @Value("${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/defaultDb}")
+    private String datasourceUrl;
+
+    @Bean
+    public DataSource dataSource() {
+        if ("defaultUsername".equals(datasourceUsername)) {
+            // SPRING_DATASOURCE_USERNAME boş ise varsayılan değerler ile devam et
+            return DataSourceBuilder.create()
+                    .url(datasourceUrl)
+                    .username("defaultUsername")
+                    .password("defaultPassword")
+                    .driverClassName("org.postgresql.Driver")
+                    .build();
+        } else {
+            // Çevresel değişkenlere dayalı olarak veri kaynağını oluştur
+            return DataSourceBuilder.create()
+                    .url(datasourceUrl)
+                    .username(datasourceUsername)
+                    .password(datasourcePassword)
+                    .driverClassName("org.postgresql.Driver")
+                    .build();
+        }
+    }
+}

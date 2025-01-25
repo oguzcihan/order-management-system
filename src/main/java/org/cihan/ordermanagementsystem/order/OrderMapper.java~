@@ -1,0 +1,31 @@
+package org.cihan.ordermanagementsystem.order;
+
+import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
+
+@Service
+public class OrderMapper {
+
+    public static OrderResponse toOrderResponse(Order savedOrder) {
+        return new OrderResponse(
+                .id(savedOrder.getId())
+                .customerId(savedOrder.getCustomerId())
+                .orderItems(savedOrder.getOrderItems().stream()
+                        .map(OrderMapper::toOrderItemResponse)
+                        .collect(Collectors.toList()))
+                .totalAmount(savedOrder.getTotalAmount())
+                .createdDate(savedOrder.getCreatedDate())
+                );
+    }
+
+    private static OrderItemResponse toOrderItemResponse(OrderItem orderItem) {
+        return OrderItemResponse.builder()
+                .id(orderItem.getId())
+                .productId(orderItem.getProductId())
+                .quantity(orderItem.getQuantity())
+                .price(orderItem.getPrice())
+                .totalPrice(orderItem.getTotalPrice())
+                .build();
+    }
+}

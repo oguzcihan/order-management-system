@@ -1,0 +1,106 @@
+package org.cihan.ordermanagementsystem;
+
+import org.cihan.ordermanagementsystem.common.exception.BusinessException;
+import org.cihan.ordermanagementsystem.customer.domain.Customer;
+import org.cihan.ordermanagementsystem.customer.domain.CustomerResponse;
+import org.cihan.ordermanagementsystem.customer.service.CustomerService;
+import org.cihan.ordermanagementsystem.order.domain.*;
+import org.cihan.ordermanagementsystem.order.mapper.OrderItemMapper;
+import org.cihan.ordermanagementsystem.order.mapper.OrderMapper;
+import org.cihan.ordermanagementsystem.order.repository.OrderRepository;
+import org.cihan.ordermanagementsystem.order.service.OrderItemService;
+import org.cihan.ordermanagementsystem.order.service.OrderService;
+import org.cihan.ordermanagementsystem.product.domain.Product;
+import org.cihan.ordermanagementsystem.product.service.ProductService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+public class OrderServiceTest {
+
+    @InjectMocks
+    private OrderService orderService;
+
+    @Mock
+    private OrderRepository orderRepository;
+
+    @Mock
+    private ProductService productService;
+
+    @Mock
+    private CustomerService customerService;
+
+    @Mock
+    private OrderItemService orderItemService;
+
+    @Mock
+    private OrderMapper orderMapper;
+
+    @Mock
+    private OrderItemMapper orderItemMapper;
+
+    @Test
+    void shouldCreateOrderSuccessfully() {
+        // Test verileri
+        UUID customerId = UUID.randomUUID();
+        UUID productId = UUID.randomUUID();
+        Product product = new Product(productId, "Test Product", "Test Description", 10, BigDecimal.valueOf(10));
+        OrderRequest orderRequest = new OrderRequest(customerId, List.of(new OrderItemRequest(productId, 2)));
+        Order order = Order.builder().customerId(customerId).totalAmount(BigDecimal.valueOf(20)).build();
+        OrderItem orderItem = OrderItem.builder()
+                .productId(productId)
+                .quantity(2)
+                .price(product.getPrice())
+                .totalPrice(BigDecimal.valueOf(20))
+                .build();
+
+        OrderItemResponse orderItemResponse = orderItemMapper.toOrderItemResponse(orderItem);
+
+        // Mock davranışları
+        when(customerService.getCustomerById(customerId)).thenReturn(Optional.of(new CustomerResponse(customerId, "John", "Doe", "jdoe@ex.com", "123456789")));
+        when(productService.findById(productId)).thenReturn(Optional.of(product));
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
+        when(orderMapper.toOrderResponse(any(Order.class))).thenReturn(new OrderResponse(order.getId(), customerId, List.of(orderItemResponse), order.getTotalAmount(), order.getCreatedDate()));
+
+        // Test metodu
+        OrderResponse response = orderService.createOrder(orderRequest);
+
+        // Doğrulamalar
+        assertNotNull(response);
+        assertEquals(customerId, response.customerId());
+        assertEquals(1, response.orderItems().size());
+        assertEquals(BigDecimal.valueOf(20), response.totalAmount());
+
+        verify(orderRepository, times(1)).save(any(Order.class));
+        verify(productService, times(1)).findById(productId);
+    }
+
+    @Test
+    void shouldThrowExceptionIfCustomerNotFound() {
+        UUID customerId = UUID.randomUUID();
+        OrderRequest orderRequest = new OrderRequest(customerId, List.of(new OrderItemRequest(UUID.randomUUID(), 2)));
+
+        when(customerService.getCustomerById(customerId)).thenReturn(Optional.empty());
+
+        BusinessException exception = assertThrows(BusinessException.class, () -> orderService.createOrder(orderRequest));
+        assertEquals("Customer not found with ID: " + customerId, exception.getMessage());
+
+        verify(customerService, times(1)).getCustomerById(customerId);
+        verifyNoInteractions(productService);
+    }
+
+}

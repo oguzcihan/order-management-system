@@ -1,0 +1,4 @@
+package org.cihan.ordermanagementsystem.order;
+
+public class OrderItemRequest {
+}
