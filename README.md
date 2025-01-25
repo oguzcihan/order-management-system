@@ -46,14 +46,14 @@ To run the Flight Service API locally, follow these steps:
 
    To open the Test Report URL, go to the test report url located in the swagger documentation: [TEST REPORT URL](http://localhost:63342/order-management-system/target/reports/surefire.html?_ijt=thlaaghe14283nl8v2h5ffu27h&_ij_reload=RELOAD_ON_SAVE)
 
-4. **Development Environment:**
+4. **Postman Collection:**
+
+    [DOWNLOAD POSTMAN COLLECTION](https://github.com/oguzcihan/order-management-system/blob/master/Order%20Management%20System.postman_collection.json)
+
+5. **Development Environment:**
 
     If you want to work on the project, you can use an integrated development environment (IDE) like Spring Tool Suite or IntelliJ IDEA.
    
-5. **Test Report Screenshot:**
+6. **Test Report Screenshot:**
 
     ![](https://github.com/oguzcihan/order-management-system/blob/master/surefire_test_report.png)
-
-6. **Postman Collection:**
-
-    [DOWNLOAD POSTMAN COLLECTION](https://github.com/oguzcihan/order-management-system/blob/master/Order%20Management%20System.postman_collection.json)
