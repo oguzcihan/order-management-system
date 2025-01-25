@@ -49,3 +49,7 @@ To run the Flight Service API locally, follow these steps:
 4. **Development Environment:**
 
     If you want to work on the project, you can use an integrated development environment (IDE) like Spring Tool Suite or IntelliJ IDEA.
+   
+5. **Test Report Screenshot:**
+
+    ![](https://github.com/oguzcihan/order-management-system/blob/master/surefire_test_report.png)
