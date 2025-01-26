@@ -25,7 +25,7 @@ To run the Flight Service API locally, follow these steps:
 1. **Clone the Repository:**
 
     ```bash
-    git clone [https://github.com/](https://github.com/oguzcihan/order-management-system.git)
+    git clone https://github.com/oguzcihan/order-management-system.git
     ```
 2. **Build and Run the Project:**
 
