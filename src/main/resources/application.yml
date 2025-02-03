@@ -20,12 +20,6 @@ spring:
       ddl-auto: update
     show-sql: true
 
-
-ocihan:
-  openapi:
-    dev-url: http://localhost:${SERVER_PORT:8090}
-
-
 logging:
   level:
     org:
