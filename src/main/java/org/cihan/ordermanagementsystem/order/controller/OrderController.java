@@ -39,15 +39,6 @@ public interface OrderController {
     @GetMapping("/{id}")
     ResponseEntity<List<OrderResponse>> getOrderByCustomerId(@PathVariable UUID id);
 
-
-    @Operation(summary = "Update order", description = "Updates an existing order")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Order updated successfully"),
-            @ApiResponse(responseCode = "404", description = "Order not found")
-    })
-    @PutMapping("/{id}")
-    ResponseEntity<OrderResponse> updateOrder(@PathVariable UUID id, @RequestBody @Valid OrderRequest orderRequest);
-
     @Operation(summary = "Delete order", description = "Deletes a order by its ID")
     @DeleteMapping("/{id}")
     ResponseEntity<Void> deleteOrder(@PathVariable UUID id);

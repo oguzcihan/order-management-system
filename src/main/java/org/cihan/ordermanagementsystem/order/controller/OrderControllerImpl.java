@@ -53,11 +53,6 @@ public class OrderControllerImpl implements OrderController {
         return ResponseEntity.ok().body(result);
     }
 
-    @Override
-    public ResponseEntity<OrderResponse> updateOrder(UUID id, @RequestBody OrderRequest orderRequest) {
-        OrderResponse result = orderService.updateOrder(id, orderRequest);
-        return ResponseEntity.ok().body(result);
-    }
 
     @Override
     public ResponseEntity<Void> deleteOrder(UUID id) {

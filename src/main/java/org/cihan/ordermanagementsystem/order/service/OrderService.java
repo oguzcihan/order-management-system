@@ -80,34 +80,6 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse updateOrder(UUID orderId, OrderRequest orderRequest) {
-
-        Order existingOrder = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NotFoundException(String.format(Constants.ORDER_NOT_FOUND, orderId)));
-
-        restoreStockForExistingOrderItems(existingOrder);
-
-        BigDecimal totalAmount = BigDecimal.ZERO;
-        List<OrderItem> updatedOrderItems = new ArrayList<>();
-
-        for (OrderItemRequest orderItemRequest : orderRequest.orderItems()) {
-            Product product = validateAndFetchProduct(orderItemRequest);
-            updateProductStock(product, orderItemRequest.quantity());
-
-            OrderItem orderItem = buildOrderItem(orderItemRequest, product);
-            updatedOrderItems.add(orderItem);
-            totalAmount = totalAmount.add(orderItem.getTotalPrice());
-        }
-
-        existingOrder.setOrderItems(updatedOrderItems);
-        existingOrder.setTotalAmount(totalAmount);
-
-        // Save and map updated order
-        Order updatedOrder = orderRepository.save(existingOrder);
-        return orderMapper.toOrderResponse(updatedOrder);
-    }
-
-    @Transactional
     public void deleteOrder(UUID orderId) {
         log.info("deleteOrder operation started");
         Order existingOrder = orderRepository.findById(orderId)
