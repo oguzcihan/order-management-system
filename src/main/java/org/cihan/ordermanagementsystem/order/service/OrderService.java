@@ -57,18 +57,16 @@ public class OrderService {
             Product product = validateAndFetchProduct(orderItemRequest);
             updateProductStock(product, orderItemRequest.quantity());
 
-            OrderItem orderItem = createOrderItem(orderItemRequest, product);
+            OrderItem orderItem = buildOrderItem(orderItemRequest, product);
             orderItems.add(orderItem);
             totalAmount = totalAmount.add(orderItem.getTotalPrice());
         }
 
-        Order order = createAndSaveOrder(orderRequest.customerId(), orderItems, totalAmount);
+        Order order = buildOrder(orderRequest.customerId(), orderItems, totalAmount);
         orderItems.forEach(item -> item.setOrder(order));
-        List<OrderItemResponse> orderItemsResponse = orderItemService.saveOrderItems(orderItems);
 
         // Map saved order and return response
-        order.setOrderItems(orderItemMapper.toOrderItemsFromOrderItemResponse(orderItemsResponse));
-        return orderMapper.toOrderResponse(order);
+        return orderMapper.toOrderResponse(orderRepository.save(order));
     }
 
     public List<OrderResponse> getOrdersByCustomerId(UUID customerId) {
@@ -96,7 +94,7 @@ public class OrderService {
             Product product = validateAndFetchProduct(orderItemRequest);
             updateProductStock(product, orderItemRequest.quantity());
 
-            OrderItem orderItem = createOrderItem(orderItemRequest, product);
+            OrderItem orderItem = buildOrderItem(orderItemRequest, product);
             updatedOrderItems.add(orderItem);
             totalAmount = totalAmount.add(orderItem.getTotalPrice());
         }
@@ -127,9 +125,9 @@ public class OrderService {
     }
 
     public List<OrderResponse> findByFilters(OrderFilter filter) {
-      return orderRepository.findByFilters(filter)
-              .stream().map(orderMapper::toOrderResponse)
-              .collect(Collectors.toList());
+        return orderRepository.findByFilters(filter)
+                .stream().map(orderMapper::toOrderResponse)
+                .collect(Collectors.toList());
     }
 
 
@@ -169,7 +167,8 @@ public class OrderService {
 
     /**
      * Updates the stock quantity of the product
-     * @param product Product
+     *
+     * @param product  Product
      * @param quantity int
      */
     private void updateProductStock(Product product, int quantity) {
@@ -183,10 +182,10 @@ public class OrderService {
     /**
      * Creates an order item
      * @param orderItemRequest OrderItemRequest
-     * @param product Product
+     * @param product          Product
      * @return OrderItem
      */
-    private OrderItem createOrderItem(OrderItemRequest orderItemRequest, Product product) {
+    private OrderItem buildOrderItem(OrderItemRequest orderItemRequest, Product product) {
         BigDecimal totalPrice = product.getPrice().multiply(BigDecimal.valueOf(orderItemRequest.quantity()));
         return OrderItem.builder()
                 .productId(orderItemRequest.productId())
@@ -203,17 +202,17 @@ public class OrderService {
      * @param totalAmount BigDecimal
      * @return Order
      */
-    private Order createAndSaveOrder(UUID customerId, List<OrderItem> orderItems, BigDecimal totalAmount) {
-        Order order = Order.builder()
+    private Order buildOrder(UUID customerId, List<OrderItem> orderItems, BigDecimal totalAmount) {
+        return Order.builder()
                 .customerId(customerId)
                 .orderItems(orderItems)
                 .totalAmount(totalAmount)
                 .build();
-        return orderRepository.save(order);
     }
 
     /**
      * Restores the stock quantity for existing order items
+     *
      * @param existingOrder Order
      */
     private void restoreStockForExistingOrderItems(Order existingOrder) {

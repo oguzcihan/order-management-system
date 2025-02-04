@@ -32,9 +32,7 @@ To run the Flight Service API locally, follow these steps:
    If this is the first time the project is being loaded, use the following Docker command:
      ```bash
     docker compose -f docker-compose.yml up --build -d 
-     ```
-   bu komut API build edip docker container'ı oluşturur ve SWAGGER: http://localhost:8080/swagger-ui/index.html adresinden ulaşılabilir hale getirir.
-   
+     ``` 
    This command builds the API and creates the Docker container. The API will be accessible at the SWAGGER URL: http://localhost:8080/swagger-ui/index.html.
    If the Docker image has been created and the API needs to be restarted, use the following Docker command:
     ```bash

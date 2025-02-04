@@ -3,6 +3,7 @@ package org.cihan.ordermanagementsystem.customer.domain;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import org.cihan.ordermanagementsystem.common.utils.Constants;
+import org.cihan.ordermanagementsystem.common.utils.Phone;
 
 public record CustomerRequest(
         @NotNull(message = Constants.CUSTOMER_FIRSTNAME_REQUIRED)
@@ -13,6 +14,7 @@ public record CustomerRequest(
         @Email(message = Constants.CUSTOMER_EMAIL_INVALID)
         String email,
 
+        @Phone
         String phone
 ) {
 }
