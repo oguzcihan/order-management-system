@@ -14,9 +14,6 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
-    @Value("${ocihan.openapi.dev-url}")
-    private String devUrl;
-
     @Bean
     public OpenAPI myOpenAPI() {
         Server devServer = new Server();
